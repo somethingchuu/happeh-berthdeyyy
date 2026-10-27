@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday! ✨</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pastelRed: {
+                            50: '#fff5f5',
+                            100: '#ffe3e3',
+                            200: '#ffc9c9',
+                            300: '#ffa8a8',
+                            400: '#ff8787',
+                            500: '#ff6b6b',
+                            600: '#fa5252',
+                            700: '#f03e3e',
+                            800: '#e03131',
+                            900: '#c92a2a',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Inter', 'sans-serif'],
+                        cursive: ['Dancing Script', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icon -->
+     <link rel="icon" type="image/png" href="HB2U.ico">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        /* Light Theme Background */
+        body.light {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 40%, #ffc9c9 70%, #fff0f0 100%);
+            background-attachment: fixed;
+            color: #4a3e3e;
+        }
+
+        /* Dark Theme Background */
+        body.dark {
+            background: linear-gradient(135deg, #1a090b 0%, #2b0d12 40%, #170507 70%, #0d0203 100%);
+            background-attachment: fixed;
+            color: #f1f1f1;
+        }
+
+        /* Glassmorphism styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px 0 rgba(250, 82, 82, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 10, 14, 0.65);
+            border: 1px solid rgba(250, 82, 82, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .glass-card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px 0 rgba(250, 82, 82, 0.22);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dark .glass-card-hover:hover {
+            background: rgba(45, 15, 20, 0.85);
+            box-shadow: 0 16px 36px 0 rgba(250, 82, 82, 0.25);
+        }
+
+        /* Flip card styling */
+        .flip-card {
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.25rem;
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom Cursor Trail Particles */
+        .cursor-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 14px;
+            animation: cursorFade 0.8s ease-out forwards;
+        }
+
+        @keyframes cursorFade {
+            0% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-20px);
+            }
+        }
+
+        /* Particle animations */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1;
+            animation: float linear infinite;
+        }
+
+        /* Candle Flame animation */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
+            50% { transform: scale(1.15) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 12px #ff8787); }
+        }
+
+        .flame {
+            animation: flicker 1.2s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff5f5;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #1a090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ffa8a8;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff6b6b;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-pastelRed-200 selection:text-pastelRed-900 light">
+
+    <!-- Floating Background Particles Container -->
+    <div id="particles-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- Theme Toggle (Top Left Floating) -->
+    <div class="fixed top-5 left-5 z-50">
+        <button id="theme-toggle" class="glass-card px-4 py-2.5 rounded-full flex items-center gap-2 text-pastelRed-600 dark:text-pastelRed-300 hover:text-pastelRed-800 transition-all duration-300 hover:scale-105 active:scale-95" title="Toggle Day/Night Mode">
+            <i id="theme-icon" class="fas fa-moon text-base"></i>
+            <span id="theme-text" class="text-xs font-semibold tracking-wider uppercase hidden sm:inline">Night Mode</span>
+        </button>
+    </div>
+
+    <!-- Music Player Control with Volume Slider (Top Right Floating) -->
+    <div class="fixed top-5 right-5 z-50 flex items-center gap-3 glass-card px-4 py-2.5 rounded-full shadow-lg border border-white/60">
+        <!-- Play / Pause Button -->
+        <button id="music-toggle" class="flex items-center gap-2 text-pastelRed-600 dark:text-pastelRed-300 hover:text-pastelRed-800 transition-colors focus:outline-none" title="Toggle Music">
+            <i id="music-icon" class="fas fa-music text-base"></i>
+            <span id="music-text" class="text-xs font-semibold tracking-wider uppercase hidden sm:inline">Play Sound</span>
+        </button>
+
+        <!-- Vertical Divider -->
+        <div class="h-4 w-px bg-pastelRed-200 dark:bg-pastelRed-800"></div>
+
+        <!-- Volume Controls -->
+        <div class="flex items-center gap-2">
+            <i id="volume-icon" class="fas fa-volume-high text-pastelRed-500 dark:text-pastelRed-300 text-xs cursor-pointer hover:text-pastelRed-700 transition-colors" title="Click to Mute"></i>
+            <input 
+                type="range" 
+                id="volume-slider" 
+                min="0" 
+                max="1" 
+                step="0.01" 
+                value="0.7" 
+                class="w-16 sm:w-20 accent-pastelRed-500 cursor-pointer h-1.5 rounded-lg bg-pastelRed-200 dark:bg-pastelRed-900 appearance-none"
+                title="Adjust Volume"
+            />
+        </div>
+
+        <!-- Audio Source -->
+        <audio id="bg-music" src="Best_Part.mp3" loop preload="auto"></audio>
+    </div>
+
+    <!-- MAIN ENTRANCE MODAL -->
+    <div id="entrance-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-pastelRed-900/40 backdrop-blur-md transition-opacity duration-700">
+        <div class="glass-card max-w-lg w-full p-8 rounded-3xl text-center shadow-2xl relative border-2 border-white/80 animate-fade-in">
+            <div class="w-20 h-20 mx-auto mb-6 bg-pastelRed-100 dark:bg-pastelRed-900/60 rounded-full flex items-center justify-center shadow-inner text-pastelRed-500 text-3xl animate-pulse">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h1 class="font-serif text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mb-3">Hey there... ✨</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-8 text-sm md:text-base leading-relaxed">
+                I built this little corner of the web just for you to celebrate your birthday. Ready to see what I made for you?
+            </p>
+            <button id="open-site-btn" class="w-full py-4 px-8 bg-gradient-to-r from-pastelRed-400 to-pastelRed-600 hover:from-pastelRed-500 hover:to-pastelRed-700 text-white font-medium rounded-2xl shadow-xl shadow-pastelRed-200 dark:shadow-none transition-all duration-300 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3 text-lg">
+                <span>Open Your Birthday Surprise</span>
+                <i class="fas fa-gift"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <main id="main-content" class="relative z-10 filter blur-sm transition-all duration-700 opacity-60">
+
+        <!-- HERO SECTION -->
+        <section class="min-h-screen flex flex-col items-center justify-center text-center px-4 py-20 relative">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-pastelRed-600 dark:text-pastelRed-300 font-medium text-sm mb-6 shadow-sm border border-pastelRed-200 dark:border-pastelRed-800">
+                <i class="fas fa-sparkles text-xs"></i>
+                <span>A Birthday Gift Designed by Yours Truly Mwehehe, Sino Pa Ba ❤︎</span>
+            </div>
+
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-gray-800 dark:text-gray-100 tracking-tight mb-6 max-w-4xl leading-tight">
+                Happy Birthday <span class="bg-gradient-to-r from-pastelRed-500 via-pastelRed-600 to-rose-400 bg-clip-text text-transparent">To You BEBIII!</span>
+            </h1>
+
+            <p class="max-w-2xl text-lg md:text-xl text-gray-600 dark:text-gray-300 font-light leading-relaxed mb-10">
+                Over these past months, talking with you has quietly become one of my favorite parts of every day. I wanted to make something unique to show you how much you mean to me.
+            </p>
+
+            <!-- Scroll indicator -->
+            <a href="#memories" class="inline-flex flex-col items-center text-pastelRed-400 hover:text-pastelRed-600 dark:text-pastelRed-400 transition-colors gap-2 text-sm">
+                <span>Scroll down</span>
+                <i class="fas fa-chevron-down animate-bounce mt-1"></i>
+            </a>
+        </section>
+
+        <!-- SECTION 1: MEMORIES & HIGHLIGHTS -->
+        <section id="memories" class="max-w-6xl mx-auto px-4 py-20">
+            <div class="text-center mb-16">
+                <span class="text-pastelRed-500 uppercase tracking-widest text-xs font-semibold">Moments I Treasure</span>
+                <h2 class="font-serif text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mt-2">What I Love About Us Talking</h2>
+                <p class="text-gray-600 dark:text-gray-300 mt-3 max-w-xl mx-auto text-sm md:text-base">Tap on each card to read my thoughts on our past few months.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Memory Card 1 -->
+                <div class="glass-card glass-card-hover rounded-3xl p-6 relative overflow-hidden group cursor-pointer border border-white/60 dark:border-pastelRed-900/40" onclick="toggleCardDetail(this)">
+                    <div class="h-48 rounded-2xl bg-gradient-to-tr from-pastelRed-200 to-pastelRed-100 dark:from-pastelRed-950 dark:to-pastelRed-900 flex items-center justify-center mb-5 text-pastelRed-500 relative overflow-hidden">
+                        <i class="fas fa-headset text-5xl group-hover:scale-110 transition-transform duration-500"></i>
+                        <span class="absolute top-3 right-3 bg-white/80 dark:bg-black/60 backdrop-blur-sm text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 font-medium">Discord Calls & Texts</span>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Our Late Night Chats</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                        Whether we're messaging randomly during the day or staying up late talking about everything and nothing.
+                    </p>
+                    <div class="card-detail hidden border-t border-pastelRed-100 dark:border-pastelRed-900 pt-3 text-xs text-pastelRed-600 dark:text-pastelRed-400 italic">
+                        "Honestly, whenever I see a message notification from you, my day immediately gets better."
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2">
+                        <span>Tap to read more</span>
+                        <i class="fas fa-arrow-right text-pastelRed-400"></i>
+                    </div>
+                </div>
+
+                <!-- Memory Card 2 -->
+                <div class="glass-card glass-card-hover rounded-3xl p-6 relative overflow-hidden group cursor-pointer border border-white/60 dark:border-pastelRed-900/40" onclick="toggleCardDetail(this)">
+                    <div class="h-48 rounded-2xl bg-gradient-to-tr from-pastelRed-300 to-pastelRed-100 dark:from-pastelRed-950 dark:to-pastelRed-900 flex items-center justify-center mb-5 text-pastelRed-600 relative overflow-hidden">
+                        <i class="fas fa-laugh-beam text-5xl group-hover:scale-110 transition-transform duration-500"></i>
+                        <span class="absolute top-3 right-3 bg-white/80 dark:bg-black/60 backdrop-blur-sm text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 font-medium">Inside Jokes</span>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">How Easy It Is To Laugh</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                        I love how naturally we joke around. You have such a great sense of humor and you always make me laugh.
+                    </p>
+                    <div class="card-detail hidden border-t border-pastelRed-100 dark:border-pastelRed-900 pt-3 text-xs text-pastelRed-600 dark:text-pastelRed-400 italic">
+                        "Joking with you is so effortless, and I catch myself smiling at my screen like an idiot half the time."
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2">
+                        <span>Tap to read more</span>
+                        <i class="fas fa-arrow-right text-pastelRed-400"></i>
+                    </div>
+                </div>
+
+                <!-- Memory Card 3 -->
+                <div class="glass-card glass-card-hover rounded-3xl p-6 relative overflow-hidden group cursor-pointer border border-white/60 dark:border-pastelRed-900/40" onclick="toggleCardDetail(this)">
+                    <div class="h-48 rounded-2xl bg-gradient-to-tr from-pastelRed-200 to-rose-100 dark:from-pastelRed-950 dark:to-pastelRed-900 flex items-center justify-center mb-5 text-pastelRed-500 relative overflow-hidden">
+                        <i class="fas fa-music text-5xl group-hover:scale-110 transition-transform duration-500"></i>
+                        <span class="absolute top-3 right-3 bg-white/80 dark:bg-black/60 backdrop-blur-sm text-xs px-3 py-1 rounded-full text-gray-700 dark:text-gray-300 font-medium">Shared Songs</span>
+                    </div>
+                    <h3 class="font-serif text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Music & Recommendations</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                        Sharing songs and listening to music together. "Best Part" always reminds me of these past few months.
+                    </p>
+                    <div class="card-detail hidden border-t border-pastelRed-100 dark:border-pastelRed-900 pt-3 text-xs text-pastelRed-600 dark:text-pastelRed-400 italic">
+                        "Now every time I listen to our songs, I can't help but think of you."
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-gray-400 pt-2">
+                        <span>Tap to read more</span>
+                        <i class="fas fa-arrow-right text-pastelRed-400"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: WHY YOU'RE SPECIAL -->
+        <section class="max-w-6xl mx-auto px-4 py-20 bg-white/30 dark:bg-black/30 backdrop-blur-sm rounded-3xl my-10 border border-white/60 dark:border-pastelRed-900/30">
+            <div class="text-center mb-16">
+                <span class="text-pastelRed-500 uppercase tracking-widest text-xs font-semibold">From My Perspective</span>
+                <h2 class="font-serif text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mt-2">Why You Are Special To Me</h2>
+                <p class="text-gray-600 dark:text-gray-300 mt-3 text-sm md:text-base">Tap each card to flip and read what I appreciate about you.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Flip Card 1 -->
+                <div class="flip-card h-64 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card p-6 flex flex-col items-center justify-center text-center border-2 border-pastelRed-200 dark:border-pastelRed-800">
+                            <div class="w-14 h-14 bg-pastelRed-100 dark:bg-pastelRed-900 text-pastelRed-500 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h4 class="font-serif text-lg font-bold text-gray-800 dark:text-gray-100">Your Sweet Heart</h4>
+                            <p class="text-xs text-gray-400 mt-2">Tap to flip</p>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-pastelRed-400 to-pastelRed-600 text-white p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                            <i class="fas fa-quote-left text-pastelRed-200 text-xl mb-2"></i>
+                            <p class="text-sm font-light leading-relaxed">
+                                You are genuinely one of the kindest people I know. The way you care and listen means more to me than you realize.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flip Card 2 -->
+                <div class="flip-card h-64 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card p-6 flex flex-col items-center justify-center text-center border-2 border-pastelRed-200 dark:border-pastelRed-800">
+                            <div class="w-14 h-14 bg-pastelRed-100 dark:bg-pastelRed-900 text-pastelRed-500 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                                <i class="fas fa-smile-beam"></i>
+                            </div>
+                            <h4 class="font-serif text-lg font-bold text-gray-800 dark:text-gray-100">Your Energy</h4>
+                            <p class="text-xs text-gray-400 mt-2">Tap to flip</p>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-pastelRed-500 to-rose-600 text-white p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                            <i class="fas fa-quote-left text-pastelRed-200 text-xl mb-2"></i>
+                            <p class="text-sm font-light leading-relaxed">
+                                You bring such a warm and comforting vibe. Talking to you never feels draining, it’s always something I look forward to.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flip Card 3 -->
+                <div class="flip-card h-64 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card p-6 flex flex-col items-center justify-center text-center border-2 border-pastelRed-200 dark:border-pastelRed-800">
+                            <div class="w-14 h-14 bg-pastelRed-100 dark:bg-pastelRed-900 text-pastelRed-500 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h4 class="font-serif text-lg font-bold text-gray-800 dark:text-gray-100">Your Mind</h4>
+                            <p class="text-xs text-gray-400 mt-2">Tap to flip</p>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-pastelRed-400 to-pastelRed-600 text-white p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                            <i class="fas fa-quote-left text-pastelRed-200 text-xl mb-2"></i>
+                            <p class="text-sm font-light leading-relaxed">
+                                I love hearing your thoughts, your opinions, and the little details about your day. You're so thoughtful.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flip Card 4 -->
+                <div class="flip-card h-64 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="flip-card-inner">
+                        <!-- Front -->
+                        <div class="flip-card-front glass-card p-6 flex flex-col items-center justify-center text-center border-2 border-pastelRed-200 dark:border-pastelRed-800">
+                            <div class="w-14 h-14 bg-pastelRed-100 dark:bg-pastelRed-900 text-pastelRed-500 rounded-2xl flex items-center justify-center text-2xl mb-4">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h4 class="font-serif text-lg font-bold text-gray-800 dark:text-gray-100">Just Being You</h4>
+                            <p class="text-xs text-gray-400 mt-2">Tap to flip</p>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back bg-gradient-to-br from-pastelRed-500 to-rose-600 text-white p-6 flex flex-col items-center justify-center text-center shadow-lg">
+                            <i class="fas fa-quote-left text-pastelRed-200 text-xl mb-2"></i>
+                            <p class="text-sm font-light leading-relaxed">
+                                You don't have to try hard to impress anyone. Just being yourself is more than enough to make you amazing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: VIRTUAL CAKE & CANDLE BLOWOUT -->
+        <section class="max-w-4xl mx-auto px-4 py-20 text-center">
+            <div class="glass-card rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-2xl border border-white/60 dark:border-pastelRed-900/40">
+                <span class="text-pastelRed-500 uppercase tracking-widest text-xs font-semibold">Make A Wish</span>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-gray-800 dark:text-gray-100 mt-2 mb-4">Blow Out Your Birthday Candles</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm max-w-md mx-auto mb-8">
+                    Close your eyes, make a wish for this new year of your life, and tap each flame to blow them out!
+                </p>
+
+                <!-- Interactive Birthday Cake -->
+                <div class="relative w-64 h-64 mx-auto my-6 flex flex-col items-center justify-end">
+                    <!-- Candles Container -->
+                    <div class="flex gap-6 mb-1 z-20">
+                        <!-- Candle 1 -->
+                        <div class="candle-item cursor-pointer flex flex-col items-center" onclick="extinguishCandle(this)">
+                            <div class="flame w-4 h-6 bg-gradient-to-t from-pastelRed-500 via-amber-300 to-white rounded-full mb-1"></div>
+                            <div class="w-3 h-12 bg-gradient-to-r from-pastelRed-300 via-pastelRed-200 to-pastelRed-400 rounded-t-sm shadow-sm"></div>
+                        </div>
+                        <!-- Candle 2 -->
+                        <div class="candle-item cursor-pointer flex flex-col items-center" onclick="extinguishCandle(this)">
+                            <div class="flame w-4 h-6 bg-gradient-to-t from-pastelRed-500 via-amber-300 to-white rounded-full mb-1"></div>
+                            <div class="w-3 h-14 bg-gradient-to-r from-pastelRed-400 via-pastelRed-300 to-pastelRed-500 rounded-t-sm shadow-sm"></div>
+                        </div>
+                        <!-- Candle 3 -->
+                        <div class="candle-item cursor-pointer flex flex-col items-center" onclick="extinguishCandle(this)">
+                            <div class="flame w-4 h-6 bg-gradient-to-t from-pastelRed-500 via-amber-300 to-white rounded-full mb-1"></div>
+                            <div class="w-3 h-12 bg-gradient-to-r from-pastelRed-300 via-pastelRed-200 to-pastelRed-400 rounded-t-sm shadow-sm"></div>
+                        </div>
+                    </div>
+
+                    <!-- Cake Top Layer -->
+                    <div class="w-48 h-16 bg-gradient-to-r from-pastelRed-200 via-pastelRed-100 to-pastelRed-200 dark:from-pastelRed-900 dark:via-pastelRed-800 dark:to-pastelRed-900 rounded-t-3xl border-b-4 border-pastelRed-300 dark:border-pastelRed-700 relative shadow-inner z-10 flex items-center justify-center">
+                        <div class="absolute -bottom-2 w-full flex justify-around">
+                            <span class="w-4 h-4 bg-white dark:bg-pastelRed-950 rounded-full inline-block shadow-sm"></span>
+                            <span class="w-4 h-4 bg-white dark:bg-pastelRed-950 rounded-full inline-block shadow-sm"></span>
+                            <span class="w-4 h-4 bg-white dark:bg-pastelRed-950 rounded-full inline-block shadow-sm"></span>
+                            <span class="w-4 h-4 bg-white dark:bg-pastelRed-950 rounded-full inline-block shadow-sm"></span>
+                        </div>
+                    </div>
+                    <!-- Cake Base Layer -->
+                    <div class="w-56 h-20 bg-gradient-to-r from-pastelRed-300 via-pastelRed-200 to-pastelRed-300 dark:from-pastelRed-800 dark:via-pastelRed-700 dark:to-pastelRed-800 rounded-b-2xl border-t-2 border-white/50 relative shadow-lg flex items-center justify-center">
+                        <span class="font-serif text-pastelRed-700 dark:text-pastelRed-200 font-bold tracking-widest text-xs">HAPPY BIRTHDAY</span>
+                    </div>
+                    <!-- Cake Plate -->
+                    <div class="w-64 h-4 bg-gray-200/80 dark:bg-gray-800 rounded-full shadow-md mt-1"></div>
+                </div>
+
+                <p id="cake-status-msg" class="text-sm font-medium text-pastelRed-600 dark:text-pastelRed-300 mt-4 h-6">
+                    Tap the flames to blow out the candles!
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: MY BIRTHDAY LETTER TO YOU -->
+        <section class="max-w-4xl mx-auto px-4 py-20">
+            <div class="text-center mb-12">
+                <span class="text-pastelRed-500 uppercase tracking-widest text-xs font-semibold">Written Just For You</span>
+                <h2 class="font-serif text-3xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mt-2">My Message To You</h2>
+                <p class="text-gray-600 dark:text-gray-300 mt-3 text-sm md:text-base">Tap on the wax seal below to open my letter.</p>
+            </div>
+
+            <!-- Envelope Container -->
+            <div id="envelope-container" class="envelope-wrapper relative max-w-2xl mx-auto">
+                <div id="envelope" class="relative bg-gradient-to-b from-pastelRed-100 to-pastelRed-200 dark:from-pastelRed-950 dark:to-pastelRed-900 rounded-3xl p-6 md:p-10 shadow-2xl border-2 border-white dark:border-pastelRed-800 transition-all duration-500 min-h-[320px] flex flex-col justify-between">
+                    
+                    <!-- Wax Seal Header -->
+                    <div class="text-center py-8">
+                        <div id="wax-seal" class="w-20 h-20 bg-gradient-to-br from-pastelRed-500 to-pastelRed-700 text-white rounded-full mx-auto flex items-center justify-center shadow-lg border-4 border-pastelRed-300 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300 group">
+                            <i class="fas fa-heart text-2xl group-hover:animate-ping"></i>
+                        </div>
+                        <p class="text-xs uppercase tracking-widest text-pastelRed-700 dark:text-pastelRed-300 font-semibold mt-4">Tap Wax Seal To Read My Letter</p>
+                    </div>
+
+                    <!-- Inner Letter Content -->
+                    <div id="letter" class="hidden glass-card bg-white/95 dark:bg-stone-900/95 rounded-2xl p-6 md:p-10 text-gray-700 dark:text-gray-200 shadow-xl border border-pastelRed-100 dark:border-pastelRed-900 animate-fade-in space-y-6 text-left">
+                        
+                        <div class="flex justify-between items-center border-b border-pastelRed-100 dark:border-pastelRed-900 pb-4">
+                            <h3 class="font-serif text-2xl md:text-3xl font-bold text-pastelRed-800 dark:text-pastelRed-300">Happy Birthday! 🎉</h3>
+                            <span class="font-cursive text-pastelRed-500 text-xl">From Shang</span>
+                        </div>
+
+                        <!-- Personal First-Person Letter from Shang -->
+                        <div class="space-y-4 font-serif leading-relaxed text-gray-700 dark:text-gray-300 text-base md:text-lg">
+                            <p><strong>
+                                Hey Bebiiiiiiiii,
+                            </strong></p>
+                            <p><strong>
+                                I was sitting here trying to figure out what to write to you today because a simple "happy birthday" text just didn't feel like enough for someone who has 
+                                become so special to me over these past few months. Honestly, getting to know you has easily been one of the absolute best parts of my days. 
+                                From our random daily chats and late-night calls to sharing songs and just laughing at the smallest things, every conversation with you is something 
+                                I genuinely look forward to. Ang saya lang sa feeling na I can always talk to you so effortlessly.
+                            </strong></p>
+                            <p><strong>
+                                You have this natural way of bringing so much light, comfort, and good energy whenever we interact. Ewan ko ba, but even on heavy or exhausting days, 
+                                talking to you instantly makes everything feel a lot lighter. You are deeply thoughtful, sweet, funny, and naturally amazing in ways you probably don't 
+                                even realize. Ang dali mong kasama at kausap because of how genuine and down-to-earth you are.
+                            </strong></p>
+                            <p><strong>
+                                I feel ridiculously lucky that our paths crossed and that I've gotten the chance to know you like this. Swerte ko talaga that I met someone like you. 
+                                You’ve brought so much good vibe into my world, and I hope you know how much I appreciate your presence, your humor, 
+                                and just how easy it is to vibe with you every single time we speak.
+                            </strong></p>
+                            <p><strong>
+                                On your special day, I hope you get treated with all the happiness, warmth, and care that you so effortlessly give to everyone around you. 
+                                I wish for all your goals, big plans, and quietest dreams to slowly come true this year. 
+                                Sana matupad lahat ng dina-dasal mo, because you truly deserve all the best things coming your way.
+                            </strong></p>
+                            <p><strong>
+                                Thank you for being such a bright, comforting part of my life lately. 
+                                Salamat kasi dumating ka. I’m really, truly glad you’re here, and 
+                                I can't wait for more good chats and fun memories with you. Happy Birthday!
+                            </strong><p class="pt-2 font-semibold text-pastelRed-600 dark:text-pastelRed-400"><strong>
+                                Happy Birthday again bebi! ✨
+                            </strong></p>
+                        </div>
+
+                        <div class="pt-6 border-t border-pastelRed-100 dark:border-pastelRed-900 flex justify-between items-center">
+                            <p class="font-cursive text-2xl text-pastelRed-600 dark:text-pastelRed-400">— Pekachuu mwehehehe</p>
+                            <button onclick="copyLetterText()" class="text-xs text-pastelRed-600 dark:text-pastelRed-300 hover:text-pastelRed-800 bg-pastelRed-50 dark:bg-pastelRed-950 hover:bg-pastelRed-100 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5 border border-pastelRed-200 dark:border-pastelRed-800">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy Letter</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center py-12 text-gray-500 dark:text-gray-400 text-sm border-t border-pastelRed-100/50 dark:border-pastelRed-900/50 mt-12">
+            <p class="font-serif italic text-base text-pastelRed-600 dark:text-pastelRed-400 mb-2">"Wishing you a birthday that’s every bit as warm, bright, and wonderful as you."</p>
+            <p>Made by Pekantotsksksksksksks</p>
+        </footer>
+
+    </main>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 glass-card bg-pastelRed-600 text-white px-5 py-3 rounded-2xl shadow-xl transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3">
+        <i class="fas fa-check-circle"></i>
+        <span id="toast-msg" class="text-sm font-medium">Action completed!</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Custom Heart Cursor Trail
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() < 0.25) { // Control density
+                const particle = document.createElement('div');
+                particle.className = 'cursor-particle';
+                
+                const icons = ['♥', '✨', '🌸'];
+                particle.textContent = icons[Math.floor(Math.random() * icons.length)];
+                
+                particle.style.left = e.clientX + 'px';
+                particle.style.top = e.clientY + 'px';
+                
+                const colors = ['#ff6b6b', '#fa5252', '#ff8787', '#ffa8a8'];
+                particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 800);
+            }
+        });
+
+        // Floating Background Particles Generator
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleIcons = ['fa-heart', 'fa-sparkles', 'fa-star'];
+            const colors = ['#ffc9c9', '#ffa8a8', '#ff8787', '#fa5252'];
+
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle text-xs sm:text-sm';
+                
+                const randomIcon = particleIcons[Math.floor(Math.random() * particleIcons.length)];
+                particle.innerHTML = `<i class="fas ${randomIcon}"></i>`;
+                
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDuration = `${8 + Math.random() * 12}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.fontSize = `${10 + Math.random() * 16}px`;
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Theme Toggle (Day/Night Mode)
+        const themeBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const html = document.documentElement;
+        const body = document.body;
+
+        themeBtn.addEventListener('click', () => {
+            if (body.classList.contains('light')) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                html.classList.add('dark');
+                themeIcon.className = 'fas fa-sun text-amber-300';
+                themeText.textContent = 'Day Mode';
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                html.classList.remove('dark');
+                themeIcon.className = 'fas fa-moon';
+                themeText.textContent = 'Night Mode';
+            }
+        });
+
+        // Entrance Unwrapper Trigger
+        document.getElementById('open-site-btn').addEventListener('click', function() {
+            const modal = document.getElementById('entrance-modal');
+            const mainContent = document.getElementById('main-content');
+            
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            mainContent.classList.remove('blur-sm', 'opacity-60');
+
+            // Trigger initial celebration confetti
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ff6b6b', '#fa5252', '#ff8787', '#ffe3e3']
+            });
+
+            // Auto play music
+            const audio = document.getElementById('bg-music');
+            audio.play().then(() => {
+                document.getElementById('music-text').textContent = 'Pause Sound';
+                document.getElementById('music-icon').classList.add('animate-bounce');
+            }).catch(() => {
+                // Autoplay blocked by browser
+            });
+        });
+
+        // Background Music & Volume Control Logic
+        const musicBtn = document.getElementById('music-toggle');
+        const audio = document.getElementById('bg-music');
+        const musicText = document.getElementById('music-text');
+        const musicIcon = document.getElementById('music-icon');
+        const volumeSlider = document.getElementById('volume-slider');
+        const volumeIcon = document.getElementById('volume-icon');
+
+        if (audio && volumeSlider) {
+            audio.volume = parseFloat(volumeSlider.value);
+
+            volumeSlider.addEventListener('input', (e) => {
+                const vol = parseFloat(e.target.value);
+                audio.volume = vol;
+
+                if (vol === 0) {
+                    volumeIcon.className = 'fas fa-volume-mute text-pastelRed-400 text-xs cursor-pointer';
+                } else if (vol < 0.5) {
+                    volumeIcon.className = 'fas fa-volume-low text-pastelRed-500 text-xs cursor-pointer';
+                } else {
+                    volumeIcon.className = 'fas fa-volume-high text-pastelRed-500 text-xs cursor-pointer';
+                }
+            });
+
+            volumeIcon.addEventListener('click', () => {
+                if (audio.volume > 0) {
+                    audio.dataset.lastVolume = audio.volume;
+                    audio.volume = 0;
+                    volumeSlider.value = 0;
+                    volumeIcon.className = 'fas fa-volume-mute text-pastelRed-400 text-xs cursor-pointer';
+                } else {
+                    const restoredVol = audio.dataset.lastVolume || 0.7;
+                    audio.volume = parseFloat(restoredVol);
+                    volumeSlider.value = restoredVol;
+                    volumeIcon.className = restoredVol < 0.5 ? 'fas fa-volume-low text-pastelRed-500 text-xs cursor-pointer' : 'fas fa-volume-high text-pastelRed-500 text-xs cursor-pointer';
+                }
+            });
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                musicText.textContent = 'Pause Sound';
+                musicIcon.classList.add('animate-bounce');
+            } else {
+                audio.pause();
+                musicText.textContent = 'Play Sound';
+                musicIcon.classList.remove('animate-bounce');
+            }
+        });
+
+        // Moment Card Toggle Detail
+        function toggleCardDetail(card) {
+            const detail = card.querySelector('.card-detail');
+            if (detail) {
+                detail.classList.toggle('hidden');
+            }
+        }
+
+        // Blow out Candles Logic
+        let litCandlesCount = 3;
+        function extinguishCandle(candleEl) {
+            const flame = candleEl.querySelector('.flame');
+            if (flame && flame.style.display !== 'none') {
+                flame.style.display = 'none';
+                litCandlesCount--;
+
+                confetti({
+                    particleCount: 15,
+                    spread: 30,
+                    startVelocity: 10,
+                    origin: { y: 0.55 },
+                    colors: ['#ffffff', '#ffc9c9']
+                });
+
+                if (litCandlesCount === 0) {
+                    document.getElementById('cake-status-msg').textContent = '🎉 Your wish has been made! Happy Birthday!';
+                    
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.5 },
+                        colors: ['#ff6b6b', '#fa5252', '#ff8787', '#ffffff']
+                    });
+                } else {
+                    document.getElementById('cake-status-msg').textContent = `${litCandlesCount} candle${litCandlesCount > 1 ? 's' : ''} left! Keep blowing!`;
+                }
+            }
+        }
+
+        // Wax Seal Envelope Opening Logic
+        document.getElementById('wax-seal').addEventListener('click', function() {
+            const letter = document.getElementById('letter');
+            const waxSeal = document.getElementById('wax-seal');
+
+            waxSeal.style.transform = 'scale(0)';
+            setTimeout(() => {
+                waxSeal.parentElement.style.display = 'none';
+                letter.classList.remove('hidden');
+
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.7 },
+                    colors: ['#ff6b6b', '#ffa8a8', '#ffffff']
+                });
+            }, 300);
+        });
+
+        // Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = message;
+            
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Copy Letter Function
+        function copyLetterText() {
+            const letterText = `Happy Birthday! 🎉\n\nHey,\n\nI was thinking about what to write to you today because a simple "happy birthday" text didn't feel like enough for someone who has become so important to me over these past months.\n\nHonestly, getting to know you has been one of the best parts of my days. From our random chats and late-night calls to sharing songs and laughing together, every conversation with you is something I genuinely look forward to.\n\nYou are deeply thoughtful, sweet, funny, and naturally amazing. I feel really lucky that we met and that I've gotten to know you like this.\n\nOn your birthday, I hope you get treated with all the happiness, warmth, and care you deserve. Happy Birthday again! ✨\n\n— Shang`;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = letterText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast('Letter text copied to clipboard!');
+        }
+
+        // Initialize particles on load
+        window.onload = function() {
+            createParticles();
+        };
+    </script>
+</body>
+</html>
